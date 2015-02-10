@@ -7,7 +7,7 @@ set :eye_strategy, :local                  # Eye strategy, :local or :system. Lo
 set :eye_servers, -> {                     # List of servers fetched by roles.
   release_roles(fetch(:eye_roles))
 }
-set :eye_processes, [ :unicorn, :resque ]  # List of application processes
+set :eye_processes, [ ]                    # List of application processes, for example: [ :unicorn, :resque ]
 set :eye_user, :auto                       # Eye service user. By default will fetched by `whoami`
 set :eye_helper_name, -> {                 # ye helper name
   fetch(:eye_strategy).to_s == 'local' ? "leye_\#{fetch(:application)}" : "eye_\#{fetch(:eye_user)}"
@@ -59,7 +59,7 @@ namespace :load do
     set :eye_roles, :all
     set :eye_strategy, :local #or global
     set :eye_servers, -> { release_roles(fetch(:eye_roles)) }
-    set :eye_processes, [:unicorn, :thin]
+    set :eye_processes, [ ]
     set :eye_user, -> { 'auto' }
     set :eye_helper_name, -> {
       fetch(:eye_strategy).to_s == 'local' ? "leye_#{fetch(:application)}" : "eye_#{fetch(:eye_user)}"
