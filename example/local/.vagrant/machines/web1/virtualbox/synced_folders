@@ -1,1 +1,0 @@
-{"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/nikolay/Projects/chef-cookbooks/capistrano-chef-eye","disabled":false},"v-csc-1":{"id":"v-csc-1","guestpath":"/tmp/vagrant-chef/870c0f0349560c538c31d0aad3e7fbc0/cookbooks","hostpath":"/Users/nikolay/.berkshelf/vagrant-berkshelf/shelves/berkshelf20150424-24591-1o6pc0y-web1","disabled":false}}}
