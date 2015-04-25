@@ -1,0 +1,31 @@
+DEPENDENCIES
+  apt
+  build-essential
+  chef_eye
+    git: https://github.com/MurgaNikolay/chef_eye.git
+    revision: a3c074f5e5ab3775aafdf0356566d176e0ee4f22
+  chef_eye_capistrano_example
+    path: ../cookbook
+
+GRAPH
+  apt (2.7.0)
+  bsw_gpg (0.2.3)
+  build-essential (2.2.3)
+  chef_eye (1.0.0)
+    apt (>= 0.0.0)
+    build-essential (>= 0.0.0)
+    ruby_rvm (>= 0.0.0)
+  chef_eye_capistrano_example (0.0.4)
+    apt (>= 0.0.0)
+    build-essential (>= 0.0.0)
+    chef_eye (>= 0.0.0)
+    ruby_rvm (>= 0.0.0)
+  chef_gem (0.1.0)
+  java (1.31.0)
+  ruby_rvm (0.4.9)
+    apt (>= 0.0.0)
+    bsw_gpg (>= 0.0.0)
+    chef_gem (>= 0.0.0)
+    java (>= 0.0.0)
+    sudo (>= 0.0.0)
+  sudo (2.7.1)
