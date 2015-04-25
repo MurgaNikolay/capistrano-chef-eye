@@ -4,12 +4,12 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'capistrano/chef_eye/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'capistrano-chef_eye'
+  spec.name          = 'capistrano-chef-eye'
   spec.version       = Capistrano::ChefEye::VERSION
   spec.authors       = ['Nikolay Murga']
   spec.email         = ['nikolay.m@murga.kiev.ua']
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Chef Eye plugin companion for Capistrano.}
+  spec.description   = %q{Chef Eye plugin companion for Capistrano.}
   spec.homepage      = ''
   spec.license       = 'MIT'
 
