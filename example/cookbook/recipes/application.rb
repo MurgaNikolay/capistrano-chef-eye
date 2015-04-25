@@ -1,14 +1,10 @@
 
 #cretae applications
-package('build-essential').run_action(:install)
-package 'nodejs-legacy'
-package 'git'
-package 'curl'
 
 include_recipe 'chef_eye::default'
 include_recipe 'chef_eye::eye'
 
-user = 'vagrant'
+user = node['chef_eye_capistrano_example']['user']
 app_name = "rails_sample"
 ruby_rvm user do
   rubies '2.0.0'

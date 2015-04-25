@@ -1,0 +1,12 @@
+name 'chef_eye_capistrano_example'
+maintainer 'Nikolay Murga'
+maintainer_email 'nikolay.m@randrmusic.com'
+license 'MIT'
+description 'Cookbook for test'
+# long_description 'Cookbook for test'
+version '0.0.4'
+
+depends 'chef_eye'
+depends 'ruby_rvm'
+depends 'apt'
+depends 'build-essential'
