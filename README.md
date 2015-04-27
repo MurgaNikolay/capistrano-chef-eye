@@ -1,6 +1,6 @@
 # Capistrano::Chef::Eye
 
-[Chef Eye] (https://github.com/MurgaNikolay/chef-eye) plugin companion for [Capistrano]  (https://github.com/capistrano/capistrano).
+[Chef Eye] (https://github.com/MurgaNikolay/chef_eye) cookbook companion for [Capistrano]  (https://github.com/capistrano/capistrano).
 
 ## Installation
 
