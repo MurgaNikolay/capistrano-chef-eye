@@ -1,16 +1,17 @@
 # config valid only for Capistrano 3.1
-lock '3.2.1'
+lock '3.4.0'
 
-set :application, 'rails_base'
+set :application, 'rails_sample'
 set :repo_url, 'https://github.com/MurgaNikolay/rails-base.git'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
-
+set :eye_strategy, ENV['EYE_LOCAL'] ? 'local' : 'user'
 # Default deploy_to directory is /var/www/my_app
-set :deploy_to, '/var/www/rails_base'
-set :rvm_ruby_version, '2.0.0@rails-base'      # Defaults to: 'default'
+set :deploy_to, '/var/www/rails_sample'
+set :rvm_ruby_version, '2.0.0@default'      # Defaults to: 'default'
 set :pty, false
+# set :eye_processes, %w(unicorn)
 # Default value for :scm is :git
 # set :scm, :git
 
@@ -24,7 +25,7 @@ set :format, :pretty
 # set :linked_files, %w{config/database.yml}
 
 # Default value for linked_dirs is []
-# set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
+set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
@@ -33,12 +34,9 @@ set :format, :pretty
 # set :keep_releases, 3
 
 namespace :deploy do
-  desc 'Restart application'
+  desc 'Restart unicorn'
   task :restart do
-    on roles(:app), in: :sequence, wait: 5 do
-      # Your restart mechanism here, for example:
-      # execute :touch, release_path.join('tmp/restart.txt')
-    end
+    invoke 'eye:unicorn:restart'
   end
 
   after :publishing, :restart
@@ -51,5 +49,4 @@ namespace :deploy do
       # end
     end
   end
-
 end

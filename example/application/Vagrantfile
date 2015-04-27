@@ -1,25 +1,37 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-
-Vagrant.configure("2") do |config|
+Vagrant.configure('2') do |config|
   # All Vagrant configuration is done here. The most common configuration
   # options are documented and commented below. For a complete reference,
   # please see the online documentation at vagrantup.com.
+  config.trigger.before :reload, stdout: true do
+    puts "Remove 'synced_folders' file"
+    `rm .vagrant/machines/web1/virtualbox/synced_folders`
+    `rm .vagrant/machines/web2/virtualbox/synced_folders`
+    `rm .vagrant/machines/web3/aws/synced_folders`
+    `rm .vagrant/machines/web4/aws/synced_folders`
+  end
 
-  config.vm.hostname = 'chef-eye'
+  config.vm.define "web1" do |web|
+    web.vm.hostname = 'rails-sample1'
+    web.vm.network :private_network, ip: '33.33.33.35'
+  end
+
+  config.vm.define "web2" do |web|
+    web.vm.hostname = 'rails-sample2'
+    web.vm.network :private_network, ip: '33.33.33.36'
+  end
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = 'chef/ubuntu-14.04'
   config.omnibus.chef_version = :latest
   # The url from where the 'config.vm.box' box will be fetched if it
   # doesn't already exist on the user's system.
-  # config.vm.box_url = "https://dl.dropbox.com/u/31081437/Berkshelf-CentOS-6.3-x86_64-minimal.box"
 
   # Assign this VM to a host-only network IP, allowing you to access it
   # via the IP. Host-only networks can talk to the host machine as well as
   # any other machines on the same network, but cannot be accessed (through this
   # network interface) by any external networks.
-  config.vm.network :private_network, ip: '33.33.33.34'
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -48,12 +60,13 @@ Vagrant.configure("2") do |config|
   #   # Use VBoxManage to customize the VM. For example to change memory:
   #   vb.customize ["modifyvm", :id, "--memory", "1024"]
   # end
+
   #
   # View the documentation for the provider you're using for more
   # information on available options.
 
   # The path to the Berksfile to use with Vagrant Berkshelf
-  config.berkshelf.berksfile_path = "./Berksfile"
+  config.berkshelf.berksfile_path = './Berksfile'
 
   # Enabling the Berkshelf plugin. To enable this globally, add this configuration
   # option to your ~/.vagrant.d/Vagrantfile file
@@ -66,51 +79,63 @@ Vagrant.configure("2") do |config|
   # An array of symbols representing groups of cookbook described in the Vagrantfile
   # to skip installing and copying to Vagrant's shelf.
   # config.berkshelf.except = []
-  config.vm.provider 'virtualbox' do |v|
+  config.vm.provision :chef_zero do |chef|
+    chef.log_level = :debug
+    chef.json = {
+      chef_eye: {
+        services: ['vagrant']
+      },
+      chef_eye_capistrano_example: {
+        local: ENV['EYE_LOCAL']
+      },
+      :'build-essential' => {
+        compile_time: true
+      },
+      apt: {
+        compile_time_update: true
+      }
+    }
+    chef.run_list = %w(
+        chef_eye_capistrano_example::default
+      )
+  end
+
+  config.vm.provider :virtualbox do |v|
     v.memory = 1024
     v.cpus = 2
   end
 
-  config.vm.provision :chef_zero do |chef|
-    chef.log_level = :info
-    chef.json = {
-      rvm: {
-        users: {
-          vagrant: {
-            rubies: [ '2.0.0' ]
-          }
-        }
-      },
-      chef_eye: {
-        applications: {
-          rails_base: {
-            eye_config: {
-              logger: '/var/www/rails_base/shared/eye.log'
-            },
-            type: 'local',
-            owner: 'vagrant', # required
-            group: 'vagrant',
-            eye_home: '/var/www/rails_base/shared/.eye',
-            working_dir: '/var/www/rails_base/current',
-            env: {"RAILS_ENV" => "production"},
-            stop_on_delete: true,
-            start_timeout: 10,
-            process: {
-              thin: {
-                # daemonize:  true,
-                pid_file: 'tmp/pids/thin.pid',
-                stdall: 'logs/thin.log',
-                start_command: '/home/vagrant/.rvm/bin/rvm 2.0.0@rails-base do bundle exec thin -P tmp/pids/thin.pid -p 33280 -e production -l logs/thin.log -d start',
-                stop_signals: ['TERM', 5, 'KILL']
-              }
-            }
-          }
+  config.vm.provider :aws do |aws, override|
+    aws.access_key_id = ENV['AWS_ACCESS_KEY']
+    aws.secret_access_key = ENV['AWS_SECRET_KEY']
+    # aws.session_token = ENV['AWS_SESSION_TOKEN']
+    aws.keypair_name = ENV['AWS_SSH_KEY_ID']
+    aws.ami = ENV['AWS_DEFAULT_AMI'] || "ami-7747d01e"
+    aws.region = ENV['AWS_DEFAULT_REGION'] || 'us-east-1'
+    override.ssh.username = ENV['AWS_USERNAME'] || 'ubuntu'
+    override.ssh.private_key_path = ENV['AWS_PRIVATE_KEY']
+    override.vm.box = "dummy"
+    override.vm.provision :chef_zero do |chef|
+      chef.log_level = :debug
+      chef.json = {
+        chef_eye: {
+          services: ['ubuntu']
+        },
+        chef_eye_capistrano_example: {
+          local: ENV['EYE_LOCAL'],
+          user: 'ubuntu'
+        },
+        :'build-essential' => {
+          compile_time: true
+        },
+        apt: {
+          compile_time_update: true
         }
       }
-    }
-    chef.run_list = %w(
-      ruby_rvm::default
-      chef_eye::default
-    )
+      chef.run_list = %w(
+        chef_eye_capistrano_example::default
+      )
+    end
   end
 end
+
