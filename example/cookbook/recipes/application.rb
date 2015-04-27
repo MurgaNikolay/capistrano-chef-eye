@@ -1,9 +1,7 @@
 
 #cretae applications
-
 include_recipe 'chef_eye::default'
-include_recipe 'chef_eye::eye'
-
+puts node.inspect
 user = node['chef_eye_capistrano_example']['user']
 app_name = "rails_sample"
 ruby_rvm user do

@@ -1,8 +1,0 @@
-source "https://supermarket.getchef.com"
-
-
-cookbook 'chef_eye', git: 'https://github.com/MurgaNikolay/chef_eye.git'
-cookbook 'chef_eye_capistrano_example', path: '../cookbook'
-cookbook 'build-essential'
-cookbook 'apt'
-

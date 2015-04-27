@@ -2,8 +2,7 @@ DEPENDENCIES
   apt
   build-essential
   chef_eye
-    git: https://github.com/MurgaNikolay/chef_eye.git
-    revision: a3c074f5e5ab3775aafdf0356566d176e0ee4f22
+    path: ../../../chef-eye
   chef_eye_capistrano_example
     path: ../cookbook
 

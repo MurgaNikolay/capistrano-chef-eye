@@ -6,7 +6,7 @@ set :repo_url, 'https://github.com/MurgaNikolay/rails-base.git'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
-set :eye_strategy, 'local'
+set :eye_strategy, ENV['EYE_LOCAL'] ? 'local' : 'user'
 # Default deploy_to directory is /var/www/my_app
 set :deploy_to, '/var/www/rails_sample'
 set :rvm_ruby_version, '2.0.0@default'      # Defaults to: 'default'
@@ -49,13 +49,4 @@ namespace :deploy do
       # end
     end
   end
-end
-
-Airbrussh.configure do |config|
-  config.log_file = "log/capistrano.log"
-  config.monkey_patch_rake = true
-  config.color = :auto
-  config.truncate = :auto
-  config.banner = :auto
-  config.command_output = true
 end

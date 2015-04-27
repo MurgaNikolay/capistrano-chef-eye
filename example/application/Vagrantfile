@@ -79,13 +79,14 @@ Vagrant.configure('2') do |config|
   # An array of symbols representing groups of cookbook described in the Vagrantfile
   # to skip installing and copying to Vagrant's shelf.
   # config.berkshelf.except = []
-
-
   config.vm.provision :chef_zero do |chef|
     chef.log_level = :debug
     chef.json = {
+      chef_eye: {
+        services: ['vagrant']
+      },
       chef_eye_capistrano_example: {
-        local: true
+        local: ENV['EYE_LOCAL']
       },
       :'build-essential' => {
         compile_time: true
@@ -117,8 +118,11 @@ Vagrant.configure('2') do |config|
     override.vm.provision :chef_zero do |chef|
       chef.log_level = :debug
       chef.json = {
+        chef_eye: {
+          services: ['ubuntu']
+        },
         chef_eye_capistrano_example: {
-          local: true,
+          local: ENV['EYE_LOCAL'],
           user: 'ubuntu'
         },
         :'build-essential' => {
