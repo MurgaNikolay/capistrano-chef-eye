@@ -79,7 +79,7 @@ The major property is:
 
 ## Example 
   
-See example/README.md
+See [example/README.md](example/README.md) 
 
 
 # TODO 
