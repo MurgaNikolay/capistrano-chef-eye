@@ -12,18 +12,22 @@ gem 'capistrano-chef-eye'
 
 And then execute:
 
-    $ bundle
-
+```bash
+$ bundle
+```
 Or install it yourself as:
 
-    $ gem install capistrano-chef-eye
+```bash
+$ gem install capistrano-chef-eye
+```
 
 ## Usage
 
 Capfile
 
-    require 'capistrano/chef_eye'
-    
+```ruby
+require 'capistrano/chef_eye'
+```    
 In command line:
 
     cap production eye:help
@@ -31,35 +35,36 @@ In command line:
 
 ### Properties
 
-    set :eye_strategy, 'local'  # chef_eye strategy. 'local' or 'user'
-    set :eye_application, -> { fetch(:application) } # eye application name. Used for generate path to eye file, and service name
-    set :eye_roles, :all
-    set :eye_servers, -> { release_roles(fetch(:eye_roles)) } # Servers with eye. Fetched by eye_roles
-    set :eye_processes, nil # List of eye processes. Library try to detect processes automatically, if nil
-    set :eye_user, -> { 'auto' } # Owner of eye process
-    set :eye_file, -> { # Path to eye application config
-      if fetch(:eye_strategy).to_s == 'local'
-        'Eyefile'
-      else
-        "/etc/eye/{eye_user}/#{fetch(:eye_application)}.eye"
-      end
-    }
-    set :eye_home, -> { # Path to eye home. 
-      if fetch(:eye_strategy).to_s == 'local'
-        "#{shared_path}"
-      else
-        "#{fetch(:deploy_to)}"
-      end
-    }
+```ruby
+set :eye_strategy, 'local'  # chef_eye strategy. 'local' or 'user'
+set :eye_application, -> { fetch(:application) } # eye application name. Used for generate path to eye file, and service name
+set :eye_roles, :all
+set :eye_servers, -> { release_roles(fetch(:eye_roles)) } # Servers with eye. Fetched by eye_roles
+set :eye_processes, nil # List of eye processes. Library try to detect processes automatically, if nil
+set :eye_user, -> { 'auto' } # Owner of eye process
+set :eye_file, -> { # Path to eye application config
+  if fetch(:eye_strategy).to_s == 'local'
+    'Eyefile'
+  else
+    "/etc/eye/{eye_user}/#{fetch(:eye_application)}.eye"
+  end
+}
+set :eye_home, -> { # Path to eye home. 
+  if fetch(:eye_strategy).to_s == 'local'
+    "#{shared_path}"
+  else
+    "#{fetch(:deploy_to)}"
+  end
+}
 
-    set :eye_bin, -> {  # Path to eye bin
-      if fetch(:eye_strategy).to_s == 'local'
-        '/usr/local/bin/leye'
-      else
-        '/usr/local/bin/eye'
-      end
-    }
-
+set :eye_bin, -> {  # Path to eye bin
+  if fetch(:eye_strategy).to_s == 'local'
+    '/usr/local/bin/leye'
+  else
+    '/usr/local/bin/eye'
+  end
+}
+```
 The major property is:
 
   * `eye_processes`  this is the array of availables eye appplications processes. You need to set up it manualy.
