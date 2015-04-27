@@ -82,7 +82,6 @@ namespace :load do
   task :defaults do
     set :eye_strategy, 'local'
     set :eye_application, -> { fetch(:application) }
-    set :eye_type, :local #or global
     set :eye_roles, :all
     set :eye_servers, -> { release_roles(fetch(:eye_roles)) }
     set :eye_processes, nil

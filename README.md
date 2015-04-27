@@ -27,23 +27,38 @@ Capfile
 In command line:
 
     cap production eye:help
+    cap production eye:processes # List of commands per processes
 
 ### Properties
 
-    set :eye_roles, :all                       # Server roles, where eye is
-    set :eye_strategy, :local                  # Eye strategy, :local or :system. Local is a eye daemon per project.
-    set :eye_processes, [ :unicorn, :resque ]  # List of application processes
-    set :eye_servers, -> {                     # List of servers fetched by roles.
-      release_roles(fetch(:eye_roles))
+    set :eye_strategy, 'local'  # chef_eye strategy. 'local' or 'user'
+    set :eye_application, -> { fetch(:application) } # eye application name. Used for generate path to eye file, and service name
+    set :eye_roles, :all
+    set :eye_servers, -> { release_roles(fetch(:eye_roles)) } # Servers with eye. Fetched by eye_roles
+    set :eye_processes, nil # List of eye processes. Library try to detect processes automatically, if nil
+    set :eye_user, -> { 'auto' } # Owner of eye process
+    set :eye_file, -> { # Path to eye application config
+      if fetch(:eye_strategy).to_s == 'local'
+        'Eyefile'
+      else
+        "/etc/eye/{eye_user}/#{fetch(:eye_application)}.eye"
+      end
     }
-    set :eye_user, :auto                       # Eye service user. By default will fetched by `whoami`
-    set :eye_helper_name, -> {                 # ye helper name
-      fetch(:eye_strategy).to_s == 'local' ? "leye_#{fetch(:application)}" : "eye_#{fetch(:eye_user)}"
-    }
-    set :eye_service_name, -> {                # Name of int.d service
-      fetch(:eye_strategy).to_s == 'local' ? "leye_#{fetch(:application)}" : "eye_#{fetch(:eye_user)}"
+    set :eye_home, -> { # Path to eye home. 
+      if fetch(:eye_strategy).to_s == 'local'
+        "#{shared_path}"
+      else
+        "#{fetch(:deploy_to)}"
+      end
     }
 
+    set :eye_bin, -> {  # Path to eye bin
+      if fetch(:eye_strategy).to_s == 'local'
+        '/usr/local/bin/leye'
+      else
+        '/usr/local/bin/eye'
+      end
+    }
 
 The major property is:
 
@@ -51,17 +66,27 @@ The major property is:
   
 ### Available tasks
 
-    cap eye:check                      
+    cap eye:check                      # Check configuration
     cap eye:help                       # Show help
-    cap eye:history
-    cap eye:info   
+    cap eye:history                    # Show monitoring history
+    cap eye:info                       # Current process status
     cap eye:processes                  # Show available process list and commands
-    cap eye:reload                     
-    cap eye:restart                    
-    cap eye:start                      
-    cap eye:stop                       
-    cap eye:trace                      
+    cap eye:reload                     # Reload configuration
+    cap eye:restart                    # Restart all processes
+    cap eye:start                      # Start all processes
+    cap eye:stop                       # Stop all processes
+    cap eye:trace                      # Trace log for application
 
+## Example 
+  
+See example/README.md
+
+
+# TODO 
+
+  - Set processes per roles
+  - Something else :)
+   
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/capistrano-chef-eye/fork )
