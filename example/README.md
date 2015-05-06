@@ -23,7 +23,7 @@
     vagrant plugin install vagrant-aws
     vagrant box add dummy https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box 
   
-### Ser AWS config
+### Set AWS config
 
     export AWS_ACCESS_KEY=AERTHMLP3VVFJ4MHFRG
     export AWS_SECRET_KEY= 34DFSC423FDS./+DDSC3WEFSDCDSVR#$R3442e32432
