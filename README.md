@@ -2,6 +2,9 @@
 
 [Chef Eye] (https://github.com/MurgaNikolay/chef_eye) cookbook companion for [Capistrano]  (https://github.com/capistrano/capistrano).
 
+[![Code Climate](https://codeclimate.com/github/MurgaNikolay/capistrano-chef-eye/badges/gpa.svg)](https://codeclimate.com/github/MurgaNikolay/capistrano-chef-eye)
+
+
 ## Installation
 
 Add this line to your application's Gemfile:
