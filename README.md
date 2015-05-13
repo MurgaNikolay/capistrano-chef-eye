@@ -1,6 +1,6 @@
-# Capistrano::Chef::Eye
+# Capistrano eye extension
 
-[Chef Eye] (https://github.com/MurgaNikolay/chef_eye) cookbook companion for [Capistrano]  (https://github.com/capistrano/capistrano).
+[Chef Eye] (https://github.com/MurgaNikolay/chef-eye) cookbook companion for [Capistrano]  (https://github.com/capistrano/capistrano).
 
 [![GitHub version](https://badge.fury.io/gh/MurgaNikolay%2Fcapistrano-chef-eye.svg)](http://badge.fury.io/gh/MurgaNikolay%2Fcapistrano-chef-eye)
 [![Code Climate](https://codeclimate.com/github/MurgaNikolay/capistrano-chef-eye/badges/gpa.svg)](https://codeclimate.com/github/MurgaNikolay/capistrano-chef-eye)
