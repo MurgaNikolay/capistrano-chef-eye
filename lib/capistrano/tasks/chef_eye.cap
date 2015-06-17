@@ -28,7 +28,7 @@ set :eye_file, -> {
   task :hook do
     processes = fetch(:eye_processes)
     output = SSHKit.config.output
-    SSHKit.config.format= :dot
+    SSHKit.config.format = :dot
     processes ||= begin
       r = eye_execute('info')
       r.map! do |info|
@@ -71,7 +71,7 @@ set :eye_file, -> {
     eye_execute(:load, fetch(:eye_file))
   end
 
-  after 'deploy:restart', 'eye:restart'
+  # after 'deploy:restart', 'eye:restart'
 end
 
 Capistrano::DSL.stages.each do |stage|
