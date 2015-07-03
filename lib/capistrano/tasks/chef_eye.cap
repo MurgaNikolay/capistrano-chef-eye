@@ -1,6 +1,6 @@
 namespace :eye do
   desc 'Show help'
-  commands = [:start, :restart, :stop, :history, :check, :info, :trace]
+  commands = [:start, :restart, :stop, :history, :info, :trace]
 
   task :hook do
     processes = fetch(:eye_processes)
@@ -17,12 +17,13 @@ namespace :eye do
     SSHKit.config.output = output
     set(:eye_processes, processes)
     processes.each do |process|
-      process = "#{fetch(:eye_application)}:#{process}" unless fetch(:eye_strategy) == 'local'
       commands.each do |command|
         Rake::Task.define_task("eye:#{process}:#{command}") do
+          process = "#{fetch(:eye_application)}:#{process}" unless fetch(:eye_strategy) == 'local'
           eye_execute(command, process)
         end
       end
+
       Rake::Task.define_task("eye:#{process}:force_restart") do
         eye_execute(:stop, process)
         eye_execute(:start, process)
@@ -42,10 +43,10 @@ namespace :eye do
   end
 
   commands.each do |command|
-    process = 'all'
-    process = "#{fetch(:eye_application)}:#{process}" unless fetch(:eye_strategy) == 'local'
     desc command.to_s
     task command do
+      process = 'all'
+      process = "#{fetch(:eye_application)}:#{process}" unless fetch(:eye_strategy) == 'local'
       eye_execute(command, process)
     end
   end
@@ -54,6 +55,11 @@ namespace :eye do
   task :force_restart do
     Rake::Task['eye:stop'].invoke
     Rake::Task['eye:start'].invoke
+  end
+
+  desc 'Check configuration'
+  task :check do
+    eye_execute(:check, fetch(:eye_file))
   end
 
   desc 'Reload configuration'
