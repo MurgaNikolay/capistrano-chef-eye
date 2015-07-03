@@ -50,14 +50,14 @@ namespace :eye do
     end
   end
 
-  desc 'Reload configuration'
-  task :force_restart, :load do
+  desc 'Force restart services'
+  task :force_restart do
     Rake::Task['eye:stop'].invoke
     Rake::Task['eye:start'].invoke
   end
 
   desc 'Reload configuration'
-  task :reload, :load do
+  task :reload do
     eye_execute(:load, fetch(:eye_file))
   end
 
