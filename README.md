@@ -5,7 +5,6 @@
 [![GitHub version](https://badge.fury.io/gh/MurgaNikolay%2Fcapistrano-chef-eye.svg)](http://badge.fury.io/gh/MurgaNikolay%2Fcapistrano-chef-eye)
 [![Code Climate](https://codeclimate.com/github/MurgaNikolay/capistrano-chef-eye/badges/gpa.svg)](https://codeclimate.com/github/MurgaNikolay/capistrano-chef-eye)
 
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -13,7 +12,6 @@ Add this line to your application's Gemfile:
 ```ruby
 gem 'capistrano-chef-eye'
 ```
-
 And then execute:
 
 ```bash
@@ -24,7 +22,6 @@ Or install it yourself as:
 ```bash
 $ gem install capistrano-chef-eye
 ```
-
 ## Usage
 
 Capfile
@@ -90,7 +87,6 @@ The major property is:
 ## Example 
   
 See [example/README.md](example/README.md) 
-
 
 # TODO 
 
