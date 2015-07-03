@@ -82,6 +82,7 @@ The major property is:
     cap eye:processes                  # Show available process list and commands
     cap eye:reload                     # Reload configuration
     cap eye:restart                    # Restart all processes
+    cap eye:force_restart              # Force restart all processes (stop and start)
     cap eye:start                      # Start all processes
     cap eye:stop                       # Stop all processes
     cap eye:trace                      # Trace log for application

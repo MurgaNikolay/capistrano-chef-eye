@@ -83,7 +83,40 @@ Vagrant.configure('2') do |config|
     chef.log_level = :debug
     chef.json = {
       chef_eye: {
-        services: ['vagrant']
+        services: {
+          'vagrant' => {
+            plugins: ['eye-hipchat', 'eye-bugsnag'],
+            config: {
+              mail: { :host => "mx.some.host", :port => 25, :domain => 'some.host' },
+              http: { :enable => true, :host => "127.0.0.1", :port => 12345 },
+              bugsnag: {
+                api_key: '123yourbugsnagapikeygoeshere321',
+                release_stage: 'production',
+                notify_release_stages: %w(staging production)
+              },
+              hipchat: {
+                token: 'hipchat_v1_token',
+                message: '<strong>#name#</strong> (#pid#) on #host# #message# at #time#.'
+              },
+              contact: {
+                errors: { type: 'mail', contact: 'carcassw@gmail.com' },
+                dev: { type: 'hipchat', contact: 'carcassw2@gmail.com' },
+                devs: { type: 'bugsnag', contact: 'whatever' },
+              }
+            }
+          }
+        },
+        plugins: {
+          'eye-hipchat' => {
+            require: 'eye/notify/hipchat',
+          },
+          'eye-bugsnag' => {
+            require: 'eye/notify/bugsnag',
+          },
+          'eye-http' => {
+            require: 'eye-http',
+          }
+        }
       },
       chef_eye_capistrano_example: {
         local: ENV['EYE_LOCAL']
@@ -119,7 +152,40 @@ Vagrant.configure('2') do |config|
       chef.log_level = :debug
       chef.json = {
         chef_eye: {
-          services: ['ubuntu']
+          services: {
+            'ubuntu' => {
+              plugins: ['eye-hipchat', 'eye-bugsnag'],
+              config: {
+                mail: { :host => "mx.some.host", :port => 25, :domain => 'some.host' },
+                http: { :enable => true, :host => "127.0.0.1", :port => 12345 },
+                bugsnag: {
+                  api_key: '123yourbugsnagapikeygoeshere321',
+                  release_stage: 'production',
+                  notify_release_stages: %w(staging production)
+                },
+                hipchat: {
+                  token: 'hipchat_v1_token',
+                  message: '<strong>#name#</strong> (#pid#) on #host# #message# at #time#.'
+                },
+                contact: {
+                  errors: { type: 'mail', contact: 'carcassw@gmail.com' },
+                  dev: { type: 'hipchat', contact: 'carcassw2@gmail.com' },
+                  devs: { type: 'bugsnag', contact: 'whatever' },
+                }
+              }
+            }
+          },
+          plugins: {
+            'eye-hipchat' => {
+              require: 'eye/notify/hipchat',
+            },
+            'eye-bugsnag' => {
+              require: 'eye/notify/bugsnag',
+            },
+            'eye-http' => {
+              require: 'eye-http',
+            }
+          }
         },
         chef_eye_capistrano_example: {
           local: ENV['EYE_LOCAL'],

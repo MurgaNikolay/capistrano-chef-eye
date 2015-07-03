@@ -1,34 +1,11 @@
 namespace :eye do
   desc 'Show help'
-  task :help do
-    puts <<-EOF
-set :eye_application_name, :my_application # Server roles, where eye is
-set :eye_roles, :all                       # Server roles, where eye is
-set :eye_type, :local                  # Eye strategy, :local or :system. Local is a eye daemon per project.
-set :eye_servers, -> {                     # List of servers fetched by roles.
-  release_roles(fetch(:eye_roles))
-}
-set :eye_processes, [ ]                    # List of application processes, for example: [ :unicorn, :resque ]
-set :eye_user, :auto                       # Eye service user. By default will fetched by `whoami`
-set :eye_helper_name, -> {                 # ye helper name
-  fetch(:eye_strategy).to_s == 'local' ? "leye_\#{fetch(:application)}" : "eye_\#{fetch(:eye_user)}"
-}
-set :eye_service_name, -> {                # Name of int.d service
-  fetch(:eye_strategy).to_s == 'local' ? "leye_\#{fetch(:application)}" : "eye_\#{fetch(:eye_user)}"
-}
-set :eye_home, -> {
-}
-
-set :eye_file, -> {
-}
-    EOF
-  end
-  commands = [:start, :restart, :stop, :history, :check, :info, :trace]
+  commands = [:start, :restart, :stop, :history, :info, :trace]
 
   task :hook do
     processes = fetch(:eye_processes)
     output = SSHKit.config.output
-    SSHKit.config.format= :dot
+    SSHKit.config.format = :dot
     processes ||= begin
       r = eye_execute('info')
       r.map! do |info|
@@ -46,6 +23,11 @@ set :eye_file, -> {
           eye_execute(command, process)
         end
       end
+
+      Rake::Task.define_task("eye:#{process}:force_restart") do
+        eye_execute(:stop, process)
+        eye_execute(:start, process)
+      end
     end
   end
 
@@ -56,22 +38,36 @@ set :eye_file, -> {
       commands.each do |command|
         puts "cap eye:#{process.to_s.yellow}:#{command}"
       end
+      puts "cap eye:#{process.to_s.yellow}:force_restart"
     end
   end
 
   commands.each do |command|
     desc command.to_s
     task command do
-      eye_execute(command, fetch(:eye_application))
+      process = 'all'
+      process = "#{fetch(:eye_application)}:#{process}" unless fetch(:eye_strategy) == 'local'
+      eye_execute(command, process)
     end
   end
 
+  desc 'Force restart services'
+  task :force_restart do
+    Rake::Task['eye:stop'].invoke
+    Rake::Task['eye:start'].invoke
+  end
+
+  desc 'Check configuration'
+  task :check do
+    eye_execute(:check, fetch(:eye_file))
+  end
+
   desc 'Reload configuration'
-  task :reload, :load do
+  task :reload do
     eye_execute(:load, fetch(:eye_file))
   end
 
-  after 'deploy:restart', 'eye:restart'
+  # after 'deploy:restart', 'eye:restart'
 end
 
 Capistrano::DSL.stages.each do |stage|

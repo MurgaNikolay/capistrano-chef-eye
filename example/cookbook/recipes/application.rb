@@ -1,7 +1,7 @@
 
 #cretae applications
 include_recipe 'chef_eye::default'
-puts node.inspect
+
 user = node['chef_eye_capistrano_example']['user']
 app_name = "rails_sample"
 ruby_rvm user do
@@ -60,6 +60,15 @@ chef_eye_application app_name do
   if node['chef_eye_capistrano_example']['local']
     provider Chef::Provider::ChefEyeApplicationLocal
     eye_home "/var/www/#{app_name}/shared"
+    eye_config do
+      mail({host: 'mx.some.host', port: 25, domain: 'some.host'})
+      http({enable: true, host: '127.0.0.1', port: 12345})
+      bugsnag({api_key: '123yourbugsnagapikeygoeshere321', release_stage: 'production', notify_release_stages: ['staging', 'production']})
+      hipchat({token: 'hipchat_v1_token', message: '<strong>#name#</strong> (#pid#) on #host# #message# at #time#.'})
+      contact(:errors, :mail, 'carcassw@gmail.com', {})
+      contact(:dev, :hipchat, 'carcassw2@gmail.com', {})
+      contact(:devs, :bugsnag, 'whatever', {})
+    end
   else
     notifies :restart, "chef_eye_service[eye_#{user}]", :immediately
   end
