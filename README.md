@@ -31,7 +31,6 @@ require 'capistrano/chef_eye'
 ```    
 In command line:
 
-    cap production eye:help
     cap production eye:processes # List of commands per processes
 
 ### Properties
@@ -73,16 +72,15 @@ The major property is:
 ### Available tasks
 
     cap eye:check                      # Check configuration
-    cap eye:help                       # Show help
     cap eye:history                    # Show monitoring history
-    cap eye:info                       # Current process status
+    cap eye:info                       # Current processes status
     cap eye:processes                  # Show available process list and commands
     cap eye:reload                     # Reload configuration
     cap eye:restart                    # Restart all processes
     cap eye:force_restart              # Force restart all processes (stop and start)
     cap eye:start                      # Start all processes
     cap eye:stop                       # Stop all processes
-    cap eye:trace                      # Trace log for application
+    cap eye:trace                      # Trace log for application. You can use GREP=<string for grep>
 
 ## Example 
   

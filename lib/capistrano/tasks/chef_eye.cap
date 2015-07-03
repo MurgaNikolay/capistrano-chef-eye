@@ -43,6 +43,7 @@ namespace :eye do
   end
 
   commands.each do |command|
+    next if command == :trace
     desc command.to_s
     task command do
       process = 'all'
@@ -51,7 +52,12 @@ namespace :eye do
     end
   end
 
-  desc 'Force restart services'
+  desc 'Trace log for application. You can use GREP=<string for grep>'
+  task :trace do
+    eye_execute(:trace, ENV['GREP'])
+  end
+
+  desc 'Force restart services (stop/start)'
   task :force_restart do
     Rake::Task['eye:stop'].invoke
     Rake::Task['eye:start'].invoke
@@ -65,6 +71,10 @@ namespace :eye do
   desc 'Reload configuration'
   task :reload do
     eye_execute(:load, fetch(:eye_file))
+  end
+
+  task :load do
+    invoke('eye:reload')
   end
 
   # after 'deploy:restart', 'eye:restart'
