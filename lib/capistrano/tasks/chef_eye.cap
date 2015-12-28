@@ -12,8 +12,9 @@ namespace :eye do
         info.split("\n").map! do |i|
           Array(i.match(/^\s\s(\S+)/))[1]
         end
-      end.flatten!.compact!.uniq
+      end.flatten.compact.uniq
     end
+
     SSHKit.config.output = output
     set(:eye_processes, processes)
     processes.each do |process|
