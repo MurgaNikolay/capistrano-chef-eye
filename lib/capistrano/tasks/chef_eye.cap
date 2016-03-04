@@ -8,7 +8,7 @@ namespace :eye do
     output = SSHKit.config.output
     SSHKit.config.format = :dot
     processes ||= begin
-      r = eye_execute('info')
+      r = eye_execute('info', '', true)
       r.map! do |info|
         info.split("\n").map! do |i|
           Array(i.match(/^\s\s(\S+)/))[1]
@@ -88,8 +88,7 @@ namespace :load do
     set :eye_roles, :all
     set :eye_servers, -> { release_roles(fetch(:eye_roles)) }
     set :eye_processes, nil
-    set :eye_user, -> { 'auto' }
-    set :eye_restart_timeout, 10
+    set :eye_restart_timeout, 15
     set :eye_file, -> {
       if fetch(:eye_strategy).to_s == 'local'
         'Eyefile'
@@ -115,7 +114,7 @@ namespace :load do
   end
 end
 
-def eye_execute(command, mask='')
+def eye_execute(command, mask='', parallel_force=false)
   res = []
   commands = []
 
@@ -131,8 +130,7 @@ def eye_execute(command, mask='')
     timeout = 2
     commands << command
   end
-  strategy = EYE_SEQUENCE_COMMANDS.include?(command.to_s) ? :sequence : :parallel
-
+  strategy = EYE_SEQUENCE_COMMANDS.include?(command.to_s) && !parallel_force ? :sequence : :parallel
   on fetch(:eye_servers), in: strategy, wait: timeout do
     begin
       within fetch(:eye_home) do
