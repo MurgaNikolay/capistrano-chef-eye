@@ -41,7 +41,7 @@ set :eye_application, -> { fetch(:application) } # eye application name. Used fo
 set :eye_roles, :all
 set :eye_servers, -> { release_roles(fetch(:eye_roles)) } # Servers with eye. Fetched by eye_roles
 set :eye_processes, nil # List of eye processes. Library try to detect processes automatically, if nil
-set :eye_user, -> { 'auto' } # Owner of eye process
+set :eye_restart_timeout, 15 # Timeout between force restart commands, sec
 set :eye_file, -> { # Path to eye application config
   if fetch(:eye_strategy).to_s == 'local'
     'Eyefile'
