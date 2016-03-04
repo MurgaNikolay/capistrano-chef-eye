@@ -88,8 +88,7 @@ namespace :load do
     set :eye_roles, :all
     set :eye_servers, -> { release_roles(fetch(:eye_roles)) }
     set :eye_processes, nil
-    set :eye_user, -> { 'auto' }
-    set :eye_restart_timeout, 10
+    set :eye_restart_timeout, 15
     set :eye_file, -> {
       if fetch(:eye_strategy).to_s == 'local'
         'Eyefile'
