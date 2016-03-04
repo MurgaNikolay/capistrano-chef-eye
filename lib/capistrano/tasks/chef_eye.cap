@@ -1,6 +1,7 @@
+EYE_SEQUENCE_COMMANDS=%w(restart force_restart info)
 namespace :eye do
   desc 'Show help'
-  commands = [:start, :restart, :stop, :history, :info, :trace]
+  commands = [:force_restart, :start, :restart, :stop, :history, :info, :trace]
 
   task :hook do
     processes = fetch(:eye_processes)
@@ -24,16 +25,12 @@ namespace :eye do
           eye_execute(command, process)
         end
       end
-
-      Rake::Task.define_task("eye:#{process}:force_restart") do
-        eye_execute(:stop, process)
-        eye_execute(:start, process)
-      end
     end
   end
 
   desc 'Show available process list and commands'
   task :processes do
+    puts "\n"
     fetch(:eye_processes).each do |process|
       puts "#{process}".bold.yellow
       commands.each do |command|
@@ -58,11 +55,10 @@ namespace :eye do
     eye_execute(:trace, ENV['GREP'])
   end
 
-  desc 'Force restart services (stop/start)'
-  task :force_restart do
-    Rake::Task['eye:stop'].invoke
-    Rake::Task['eye:start'].invoke
-  end
+  # desc 'Force restart services (stop/start)'
+  # task :force_restart do
+  #   invoke('eye:force_restart')
+  # end
 
   desc 'Check configuration'
   task :check do
@@ -93,6 +89,7 @@ namespace :load do
     set :eye_servers, -> { release_roles(fetch(:eye_roles)) }
     set :eye_processes, nil
     set :eye_user, -> { 'auto' }
+    set :eye_restart_timeout, 10
     set :eye_file, -> {
       if fetch(:eye_strategy).to_s == 'local'
         'Eyefile'
@@ -120,21 +117,35 @@ end
 
 def eye_execute(command, mask='')
   res = []
+  commands = []
+
   rvm_path = fetch(:rvm_path)
   eye_bin = fetch(:eye_bin)
   eye_bin = "#{rvm_path}/bin/rvm system do #{eye_bin}" if rvm_path
-  cmd = "#{eye_bin} #{command} #{mask}".strip
 
-  on fetch(:eye_servers) do
+  if command.to_s == 'force_restart'
+    timeout = fetch(:eye_restart_timeout)
+    commands << 'stop'
+    commands << 'start'
+  else
+    timeout = 2
+    commands << command
+  end
+  strategy = EYE_SEQUENCE_COMMANDS.include?(command.to_s) ? :sequence : :parallel
+  puts strategy
+  on fetch(:eye_servers), in: strategy, wait: timeout do
     begin
       within fetch(:eye_home) do
-        cmd.gsub!('{eye_user}', capture('whoami'))
-        result = capture(*cmd.split(' '))
-        res << result
-        # puts result unless fetch(:format) == :pretty
+        whoami = capture('whoami')
+        commands.each do |cmd|
+          puts cmd = "#{eye_bin} #{cmd} #{mask}".strip
+          cmd.gsub!('{eye_user}', whoami)
+          result = capture(*cmd.split(' '))
+          res << result
+        end
       end
     rescue Exception => e
-      # puts e.message
+      puts e.message
     end
   end
   res
